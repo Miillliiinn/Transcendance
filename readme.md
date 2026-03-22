@@ -528,10 +528,6 @@ FK = Foreign Key :
       - [❌] Optional: spectator chat.
 
 
-# Individual Contributions
-
-_TODO_
-
 # File review
 
 - __Backend__ (backend/src/)
