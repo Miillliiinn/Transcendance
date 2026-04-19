@@ -1,3 +1,4 @@
+import { legalPageHTML, initLegal } from './legal.js';
 import { getCsrfToken, userStore } from './userStore.js';
 await userStore.init();
 if (userStore.get('is_staff') === 'true') {
@@ -13,7 +14,8 @@ import { initModeGame } from './ModeGame.js';
 import { lockNav } from './State.js';
 import { tournamentState ,initTournamentLogic, loadLeaderboard, initSpectatorMode, initBouncingBalls, initProfile, initChat} from '../main.js';
 import { navigateTo } from './State.js';
-const UID      = 'u-s4t2ud-ca92bf4d5bd6937ac2295ecb335d4eb51dc7a9a1e0d5554f8555fdc4c7c2c597';
+import { FORTYTWO_CLIENT_UID } from '../config.js';
+const UID      = FORTYTWO_CLIENT_UID;
 const CALLBACK = encodeURIComponent('https://localhost:8443/accounts/fortytwo/login/callback/');
 const authUrl  = `https://api.intra.42.fr/oauth/authorize?client_id=${UID}&redirect_uri=${CALLBACK}&response_type=code`;
 const playModePageHTML = `
@@ -38,6 +40,17 @@ const playPageHTML = `
         <canvas id="pongCanvas" width="1200" height="650" style="display:none;"></canvas>
     </div>
 `;
+
+async function cancelMatchmaking() {
+    if (!sessionStorage.getItem('matchmaking_active')) return;
+    sessionStorage.removeItem('matchmaking_active');
+    try {
+        await fetch('/api/game/matchmaking/cancel/', {
+            method: 'POST', credentials: 'include',
+            headers: { 'X-CSRFToken': getCsrfToken() }
+        });
+    } catch(e) {}
+}
 
 export const routes = {
 
@@ -66,7 +79,7 @@ export const routes = {
                     <canvas id="pong-canvas-bg"></canvas>
                     <div class="hero-container" style="position:relative; z-index:1;">
                         <div class="home-profile-header">
-                        <h1>Pong Game 🎾</h1>
+                        <h2>Pong Game 🎾</h2>
                         <h5>📌 Connecte-toi pour jouer 📌</h5>
                         </div>
                         <div class="pong-showcase">
@@ -167,8 +180,9 @@ export const routes = {
                                 <h4>${name}</h4>
                                     ${avatar ? `<img src="${avatar}" class="home-avatar-img" style="border-color:${color}">` : ''}
                                     <div class="level-badge">Niveau ${level - 1}</div>
-                                    <h5>👑 Grade : ${grade} 👑</h5>
-                                    <h1>Pong Game 🎾</h1>
+                                    <pr> </pr>
+                                    <h6>👑 Grade : ${grade} 👑</h6>
+                                    <h2>Pong Game 🎾</h2>
                                 </div>
                                 <div class="pong-showcase">
                                     <div class="pong-gif-mockup">
@@ -301,7 +315,7 @@ export const routes = {
             const myName = userStore.get('user_name', 'Player');
             return `
                 <canvas id="pong-canvas-bg"></canvas>
-                <h2 style="text-transform:uppercase;letter-spacing:2px;">⚔️ Pong Match ⚔️</h2>
+                <h4 style="text-transform:uppercase;letter-spacing:2px;">⚔️ Pong Match ⚔️</h4>
                 <div id="game-layout" style="display:flex;gap:30px;align-items:flex-start;justify-content:center;padding:20px;flex-wrap:wrap;">        
                     <!-- COLONNE GAUCHE -->
                     <div id="setup-container" style="display:flex;flex-direction:column;align-items:center;gap:20px;min-width:320px;">
@@ -501,7 +515,7 @@ export const routes = {
                     } catch (e) {
                         isSearching = false;
                         clearInterval(interval);
-                        btnMatchmaking.disabled = false;
+                        btnMatchmaking.disabled = false;    
                         sessionStorage.removeItem('matchmaking_active');
                         mmStatus.innerHTML = `<span style="color:#ff4d6d;">Erreur réseau.</span>`;
                     }
@@ -1007,4 +1021,12 @@ export const routes = {
         },
         init: () => {}
     },
+    '/legal': {
+    title: 'Mentions légales',
+    render: () => legalPageHTML,
+    init: () => {
+        initBouncingBalls();
+        initLegal();
+    }
+},
 };

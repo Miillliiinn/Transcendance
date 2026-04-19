@@ -24,7 +24,7 @@ __Transcendence__ is a full-stack web application built as the final project of 
 
 - Create a .env file at the root of the project:
 ```
-Database:
+#Database:
 POSTGRES_DB=postgres_name
 POSTGRES_USER=postgres_user
 POSTGRES_PASSWORD=postgres_password
@@ -32,7 +32,7 @@ POSTGRES_HOST=postgres_host
 POSTGRES_PORT=postgres_port
 
 
-Django:
+#Django:
 DJANGO_SUPERUSER_USERNAME=superusername_example
 DJANGO_SUPERUSER_PASSWORD=superusername_password
 DJANGO_SUPERUSER_EMAIL=superusername@email.com
@@ -41,12 +41,17 @@ DEBUG=1
 ALLOWED_HOSTS=allowed_host
 
 
-Container name for the Makefile:
+#Container name for the Makefile:
 DOCKER_COMPOSE = docker compose
 
 
-For 42 intra connections:
-FORTYTWO_CLIENT_SECRET=s-s0t0ud-fa0a0a0a0a0a0a0a0a0a0a0a0a0
+#For 42 intra connections:
+FORTYTWO_CLIENT_UID=u-example-example
+FORTYTWO_CLIENT_SECRET=s-example-example
+```
+- Create a config.js at this location : frontend/src/ and put your client UID in :
+```
+export const FORTYTWO_CLIENT_UID = 'u-example-example';
 ```
 - __Access__
 
